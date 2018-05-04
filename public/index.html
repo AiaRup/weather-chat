@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.11/css/all.css">
+  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <title>Weather Chat</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Weather Chat</h1>
+    <hr>
+    <div id="ajax-loader">
+      <img src="ajax-loader.gif" alt="ajax-loader">
+    </div>
+      <form class="input-group search-city" novalidate>
+        <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
+        </span>
+      </form>
+      <div class="invalid-city">
+        Please provide a valid city.
+      </div>
+      <div class="posts"></div>
+  </div>
+
+  <script type="text/javascript" src="/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="datejs/src/core/parser.js"></script>
+  <script type="text/javascript" src="/script.js"></script>
+</body>
+
+</html>
