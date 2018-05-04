@@ -19,6 +19,9 @@ var weatherApp = function () {
     var timeInMs = new Date(Date.now());
     var cityPost = {
       city: data.name,
+      description: data.weather[0].description,
+      icon: data.weather[0].icon,
+      country: data.sys.country,
       temp: {
         celsius: Math.round(data.main.temp),
         fahrenheit: Math.round(data.main.temp * 1.8)
@@ -47,7 +50,7 @@ var weatherApp = function () {
       var output = '';
       for (var j = 0; j < city.comments.length; j += 1) {
         var comment = city.comments[j];
-        output += `<p class="comment"><i class="far fa-comment"></i> ${comment} </p>`;
+        output += `<p class="comment"><i class="far fa-comment"></i>${comment}</p>`;
       }
       $post.find('.comments').append(output);
     }
@@ -59,7 +62,7 @@ var weatherApp = function () {
     post.find('.comments').empty();
     var output = '';
     for (let i = 0; i < cities[postIndex].comments.length; i++) {
-      output += `<p class="comment"><i class="far fa-comment"></i> ${cities[postIndex].comments[i]} </p>`;
+      output += `<p class="comment"><i class="far fa-comment"></i>${cities[postIndex].comments[i]}</p>`;
     }
     post.find('.comments').append(output);
   };
@@ -74,14 +77,18 @@ var weatherApp = function () {
     var button = '<span class="input-group-btn"><button type="submit" class="btn btn-success add-comment">Comment</button></span>';
     var commentDiv = '<div class="comments"></div>';
     var trash = '<a href="" class="remove-item"><i class="far fa-trash-alt"></i></a>';
-    var validComment = '<div class="invalid-comment">Please write some text in the comment</div>';
 
     for (let i = 0; i < cities.length; i++) {
       const object = cities[i];
       // create the comment form
-      commentForm = `<form class="input-group post-form"><input type="text" id="input-comment" placeholder="Comment about the weather in ${object.city} "class="form-control"> ${button} </form> ${validComment}`;
+      commentForm = `<form class="input-group post-form"><input type="text" id="input-comment" placeholder="Comment about the weather in ${object.city} "class="form-control"> ${button} </form><div class="invalid-comment"></div>`;
       // create the post div
-      newPost += '<div class="new-city">' + `<div class="header-post"><h4 class="city"> ${object.city.toUpperCase()}</h4> ${trash} </div>` + `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} </div> ${commentDiv} ${commentForm}</div>`;
+      newPost += '<div class="new-city">' +
+       `<div class="header-post">
+       <h4 class="city"> ${object.city}, ${object.country}</h4> ${trash} </div>` +
+       `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} <img src="http://openweathermap.org/img/w/${object.icon}.png">
+       <span class="temp">${object.description}</span>
+       </div> ${commentDiv} ${commentForm}</div></div>`;
     }
     $('.posts').append(newPost);
 
@@ -113,10 +120,11 @@ var weatherApp = function () {
   var fetch = function (urlCity) {
     $.get(urlCity).then(function (data) {
       console.log(data);
-
       _addPost(data);
       updatePosts();
+      _renderAllComments();
     }).catch(function (error) {
+      $('.invalid-city').text('No city was found, try another search').show().fadeOut(5000);
       console.log(error);
     });
     //   $.ajax({
@@ -156,7 +164,7 @@ $('#getTemp').on('click keypress', function (e) {
   var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=metric&sunits=imperial&appid=d703871f861842b79c60988ccf3b17ec';
   // check if input is empty
   if (city === '') {
-    $('.invalid-city').show().fadeOut(1500);
+    $('.invalid-city').show().text('Please enter city\'s name.').fadeOut(5000);
     return;
   }
 
@@ -185,7 +193,7 @@ $('.posts').on('click keypress', '.add-comment', function (e) {
   var commentText = $(this).parent().siblings('#input-comment').val();
   // check if input is empty
   if (commentText === '') {
-    $(this).closest('.post-form').siblings('.invalid-comment').show().fadeOut(1500);
+    $(this).closest('.post-form').siblings('.invalid-comment').text('Please write some text in the comment.').show().fadeOut(5000);
     return;
   }
   // check if enter was the key that was presssed

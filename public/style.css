@@ -1,11 +1,28 @@
 /**** general ****/
+body, html {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: url('background-weather.jpg')no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
 .container {
-  max-width: 720px;
+  max-width: 820px;
+  }
+
+  .container-fluid {
+    max-width: 1200px;
   }
 
 /**** header section ****/
 h1 {
-  margin-top: 40px;
+  margin: 40px;
+  font-family: 'Courgette', cursive;
+  text-align: center;
+  font-size: 50px;
 }
 
 .search-city {
@@ -25,9 +42,10 @@ h1 {
   margin: 30px 0;
   min-height: 150px;
   padding: 10px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
+/*trash*/
 .remove-item {
   color: red;
   font-size: 20px;
@@ -37,21 +55,25 @@ h1 {
   color: rgba(255, 0, 0, 0.7);
 }
 
+/*header of each post*/
 .header-post {
   display: flex;
   justify-content: space-between;
+  font-family: 'Courgette', cursive;
 }
 
+/*temp and time of each post*/
 .data-api {
   margin: 0 0 20px 30px;
 }
 
-.post-form {
-  margin-top: 20px;
-}
-
 .temp {
   font-weight: bold;
+}
+
+/*comments of each post*/
+.post-form {
+  margin-top: 20px;
 }
 
 .comment {
@@ -61,7 +83,7 @@ h1 {
 
 .invalid-city, .invalid-comment {
   color: red;
-  display: none;
+  /* display: none; */
 }
 
 .fa-comment {
