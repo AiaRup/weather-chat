@@ -14,7 +14,7 @@ var weatherApp = function () {
     return JSON.parse(localStorage.getItem(STORAGE_ID) || '[]');
   };
 
-  // add new city to the page
+  // add new city to the array
   var _addPost = function (data) {
     var timeInMs = new Date(Date.now());
     var cityPost = {
@@ -27,6 +27,7 @@ var weatherApp = function () {
         fahrenheit: Math.round(data.main.temp * 1.8)
       },
       time: {
+        timeInMs:timeInMs.getTime(),
         hour: timeInMs.toLocaleTimeString().substring(0, 5),
         date: timeInMs.toLocaleDateString().replace(/\./g, '/')
       },
@@ -56,7 +57,6 @@ var weatherApp = function () {
     }
   };
 
-
   // update comments of one post on the page
   var _updateComment = function (post, postIndex) {
     post.find('.comments').empty();
@@ -67,7 +67,20 @@ var weatherApp = function () {
     post.find('.comments').append(output);
   };
 
-  /****External Functions*****/
+  // sorting functions
+  function _sortByCity(a,b) {
+    return (a.city > b.city) ? 1 : ((b.city > a.city) ? -1 : 0);
+  }
+
+  function _sortByTemp(a,b) {
+    return a.temp.celsius - b.temp.celsius;
+  }
+
+  function _sortByDate(a,b) {
+    return  b.time.timeInMs - a.time.timeInMs;
+  }
+
+  /****Return Functions*****/
   // add new search-city to the page
   var updatePosts = function () {
     $('.posts').empty();
@@ -127,18 +140,13 @@ var weatherApp = function () {
       $('.invalid-city').text('No city was found, try another search').show().fadeOut(5000);
       console.log(error);
     });
-    //   $.ajax({
-    //     method: 'GET',
-    //     url: urlCity,
-    //     success: function (data) {
-    //       console.log(data);
-    //       _addPost(data);
-    //       updatePosts();
-    //     },
-    //     error: function (jqXHR, textStatus, errorThrown) {
-    //       console.log(textStatus);
-    //     }
-    //   });
+  };
+
+  // sorting the cities on the page
+  var sortPage = function(sortChoice) {
+  // check what option of sorting was selected
+    cities = (sortChoice == 1) ? cities.sort(_sortByCity) : (sortChoice == 2 ? cities.sort(_sortByTemp) : cities.sort(_sortByDate));
+    updatePosts();
   };
 
   // update the array as soon as the page loads
@@ -149,7 +157,8 @@ var weatherApp = function () {
   return {
     fetch: fetch,
     removePost: removePost,
-    addComment: addComment
+    addComment: addComment,
+    sortPage: sortPage
   };
 };
 
@@ -203,6 +212,14 @@ $('.posts').on('click keypress', '.add-comment', function (e) {
     $(this).parent().siblings('#input-comment').val('');
   }
 });
+
+$('select').change(function() {
+  var sortBy = $(this).find('option:selected').val();
+  app.sortPage(sortBy);
+  console.log(sortBy);
+});
+
+
 
 // Event for showing the loading image when waiting for ajax response
 $(document).ajaxSend(function () {

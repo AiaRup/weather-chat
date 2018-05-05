@@ -18,21 +18,51 @@
     <div id="ajax-loader">
       <img src="ajax-loader.gif" alt="ajax-loader">
     </div>
-    <form class="input-group search-city" novalidate>
-      <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
+    <!-- <form class="input-group search-city"> -->
+    <!-- <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
       <span class="input-group-btn">
         <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
       </span>
+    </form> -->
+    <!-- <div class="invalid-city">
+    </div> -->
+    <!-- <form>
+      <div class="form-group">
+        <label class="sort-by" for="sort">Sort By</label>
+        <select class="form-control" id="CustomSelect">
+          <option selected>Date</option>
+          <option value="1">City</option>
+          <option value="2">Temperature</option>
+        </select>
+      </div> -->
+    <form class="search-city">
+      <div class="form-row">
+        <div class="form-group col-md-9 input-group">
+            <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
+            </span>
+        </div>
+        <div class="form-group col-md-3">
+          <select class="form-control" id="sort-by">
+            <option selected>Sort by...</option>
+            <option value="1">City (alphabetic)</option>
+            <option value="2">Temperature (coldest 1st)</option>
+            <option value="3">Date (latest post 1st)</option>
+
+          </select>
+        </div>
+      </div>
     </form>
     <div class="invalid-city">
     </div>
     <div class="posts"></div>
-  </div>
+    <!-- </form> -->
 
 
-  <script type="text/javascript" src="/jquery/dist/jquery.js"></script>
-  <script type="text/javascript" src="datejs/src/core/parser.js"></script>
-  <script type="text/javascript" src="/script.js"></script>
+    <script type="text/javascript" src="/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="datejs/src/core/parser.js"></script>
+    <script type="text/javascript" src="/script.js"></script>
 </body>
 
 </html>
