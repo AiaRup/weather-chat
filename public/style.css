@@ -49,6 +49,12 @@ h1 {
 .remove-item {
   color: red;
   font-size: 20px;
+  margin-left: 20px;
+}
+
+/*pin*/
+.pin-item {
+  color: #000;
 }
 
 .remove-item:hover {

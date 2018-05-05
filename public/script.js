@@ -89,7 +89,8 @@ var weatherApp = function () {
       commentForm = '';
     var button = '<span class="input-group-btn"><button type="submit" class="btn btn-success add-comment">Comment</button></span>';
     var commentDiv = '<div class="comments"></div>';
-    var trash = '<a href="" class="remove-item"><i class="far fa-trash-alt"></i></a>';
+    var trash = '<a href="" title="delete this post" class="remove-item"><i class="far fa-trash-alt"></i></a>';
+    var pin = '<a href="" title="pin this post" class="pin-item"><i class="fas fa-thumbtack"></i></a>';
 
     for (let i = 0; i < cities.length; i++) {
       const object = cities[i];
@@ -98,7 +99,7 @@ var weatherApp = function () {
       // create the post div
       newPost += '<div class="new-city">' +
        `<div class="header-post">
-       <h4 class="city"> ${object.city}, ${object.country}</h4> ${trash} </div>` +
+       <h4 class="city"> ${object.city}, ${object.country}</h4><div class="icons">${pin} ${trash}</div></div>` +
        `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} <img src="http://openweathermap.org/img/w/${object.icon}.png">
        <span class="temp">${object.description}</span>
        </div> ${commentDiv} ${commentForm}</div></div>`;
