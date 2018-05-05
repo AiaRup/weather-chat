@@ -15,26 +15,6 @@
 <body>
   <div class="container">
     <h1>Weather Chat</h1>
-    <div id="ajax-loader">
-      <img src="ajax-loader.gif" alt="ajax-loader">
-    </div>
-    <!-- <form class="input-group search-city"> -->
-    <!-- <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
-      <span class="input-group-btn">
-        <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
-      </span>
-    </form> -->
-    <!-- <div class="invalid-city">
-    </div> -->
-    <!-- <form>
-      <div class="form-group">
-        <label class="sort-by" for="sort">Sort By</label>
-        <select class="form-control" id="CustomSelect">
-          <option selected>Date</option>
-          <option value="1">City</option>
-          <option value="2">Temperature</option>
-        </select>
-      </div> -->
     <form class="search-city">
       <div class="form-row">
         <div class="form-group col-md-9 input-group">
@@ -44,7 +24,7 @@
             </span>
         </div>
         <div class="form-group col-md-3">
-          <select class="form-control" id="sort-by">
+          <select class="form-control custom-select" id="sort-by">
             <option selected>Sort by...</option>
             <option value="1">City (alphabetic)</option>
             <option value="2">Temperature (coldest 1st)</option>
@@ -53,11 +33,13 @@
         </div>
       </div>
     </form>
-    <div class="invalid-city">
+    <div class="invalid-city"></div>
+    <div id="ajax-loader">
+      <img src="ajax-loader.gif" alt="ajax-loader">
     </div>
+    <div class="pinnedPosts"></div>
     <div class="posts"></div>
-    <!-- </form> -->
-
+    </div>
 
     <script type="text/javascript" src="/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="datejs/src/core/parser.js"></script>

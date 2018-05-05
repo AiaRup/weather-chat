@@ -1,21 +1,31 @@
 var weatherApp = function () {
   // declare some variables
   var cities = [];
+  var pinnedCities = [];
   var STORAGE_ID = 'searchCities';
+  var STORAGE_ID_PN = 'pinnedCities';
 
   /***Internal Functions***/
   //stringify and save our entire cities array.
   var _saveToLocalStorage = function () {
     localStorage.setItem(STORAGE_ID, JSON.stringify(cities));
+    localStorage.setItem(STORAGE_ID_PN, JSON.stringify(pinnedCities));
   };
 
   //get our cities array out of local storage and convert them back to JS objects
   var _getFromLocalStorage = function () {
-    return JSON.parse(localStorage.getItem(STORAGE_ID) || '[]');
+    var storageCities = JSON.parse(localStorage.getItem(STORAGE_ID) || '[]');
+    var storagePinned = JSON.parse(localStorage.getItem(STORAGE_ID_PN) || '[]');
+    return {
+      storageCities: storageCities,
+      storagePinned: storagePinned
+    };
   };
 
   // add new city to the array
   var _addPost = function (data) {
+    console.log(data);
+
     var timeInMs = new Date(Date.now());
     var cityPost = {
       city: data.name,
@@ -27,7 +37,7 @@ var weatherApp = function () {
         fahrenheit: Math.round(data.main.temp * 1.8)
       },
       time: {
-        timeInMs:timeInMs.getTime(),
+        timeInMs: timeInMs.getTime(),
         hour: timeInMs.toLocaleTimeString().substring(0, 5),
         date: timeInMs.toLocaleDateString().replace(/\./g, '/')
       },
@@ -68,16 +78,16 @@ var weatherApp = function () {
   };
 
   // sorting functions
-  function _sortByCity(a,b) {
+  function _sortByCity(a, b) {
     return (a.city > b.city) ? 1 : ((b.city > a.city) ? -1 : 0);
   }
 
-  function _sortByTemp(a,b) {
+  function _sortByTemp(a, b) {
     return a.temp.celsius - b.temp.celsius;
   }
 
-  function _sortByDate(a,b) {
-    return  b.time.timeInMs - a.time.timeInMs;
+  function _sortByDate(a, b) {
+    return b.time.timeInMs - a.time.timeInMs;
   }
 
   /****Return Functions*****/
@@ -98,24 +108,24 @@ var weatherApp = function () {
       commentForm = `<form class="input-group post-form"><input type="text" id="input-comment" placeholder="Comment about the weather in ${object.city} "class="form-control"> ${button} </form><div class="invalid-comment"></div>`;
       // create the post div
       newPost += '<div class="new-city">' +
-       `<div class="header-post">
+        `<div class="header-post">
        <h4 class="city"> ${object.city}, ${object.country}</h4><div class="icons">${pin} ${trash}</div></div>` +
-       `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} <img src="http://openweathermap.org/img/w/${object.icon}.png">
+        `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} <img src="http://openweathermap.org/img/w/${object.icon}.png">
        <span class="temp">${object.description}</span>
        </div> ${commentDiv} ${commentForm}</div></div>`;
     }
     $('.posts').append(newPost);
-
   };
 
   //remove item from cities cart
-  var removePost = function (index) {
-    for (let i = 0; i < cities.length; i++) {
+  var removePost = function (index, array) {
+    array = array === 'pinnedCities' ? pinnedCities : cities;
+    for (let i = 0; i < array.length; i++) {
       if (i === index) {
-        cities.splice(index, 1);
+        array.splice(index, 1);
       }
+      _saveToLocalStorage();
     }
-    _saveToLocalStorage();
   };
 
   // add comment to the array
@@ -133,25 +143,40 @@ var weatherApp = function () {
   // get data from the weather api
   var fetch = function (urlCity) {
     $.get(urlCity).then(function (data) {
-      console.log(data);
       _addPost(data);
       updatePosts();
       _renderAllComments();
     }).catch(function (error) {
       $('.invalid-city').text('No city was found, try another search').show().fadeOut(5000);
-      console.log(error);
     });
   };
 
   // sorting the cities on the page
-  var sortPage = function(sortChoice) {
-  // check what option of sorting was selected
+  var sortPage = function (sortChoice) {
+    // check what option of sorting was selected
     cities = (sortChoice == 1) ? cities.sort(_sortByCity) : (sortChoice == 2 ? cities.sort(_sortByTemp) : cities.sort(_sortByDate));
     updatePosts();
   };
 
+  var pinItem = function (postIndex, post) {
+    //pin the post to the page
+    $('.pinnedPosts').append(post);
+    // add the post to the pinned array and remove from cities array
+    for (let i = 0; i < cities.length; i++) {
+      if (postIndex === i) {
+        pinnedCities.unshift(cities[i]);
+        cities.splice(i, 1);
+      }
+    }
+    // save to local storage and update the cities post
+    _saveToLocalStorage();
+    updatePosts();
+  };
+
   // update the array as soon as the page loads
-  cities = _getFromLocalStorage();
+  cities = _getFromLocalStorage().storageCities;
+  pinnedCities = _getFromLocalStorage().storagePinned;
+
   updatePosts();
   _renderAllComments();
 
@@ -159,7 +184,8 @@ var weatherApp = function () {
     fetch: fetch,
     removePost: removePost,
     addComment: addComment,
-    sortPage: sortPage
+    sortPage: sortPage,
+    pinItem: pinItem
   };
 };
 
@@ -190,9 +216,11 @@ $('#getTemp').on('click keypress', function (e) {
 $('.posts').on('click', '.remove-item', function () {
   var $post = $(this).closest('.new-city');
   var index = $post.index();
-  // remove from the cities array
-  app.removePost(index);
-  // remove from the page
+  var array;
+  // Check  if post is pinned or not and remove from the corresponding array
+  array = $post.hasClass('pinned') ? 'pinnedCities' : 'cities';
+  app.removePost(index, array);
+  // remove from page
   $post.remove();
 });
 
@@ -214,13 +242,20 @@ $('.posts').on('click keypress', '.add-comment', function (e) {
   }
 });
 
-$('select').change(function() {
+// Check select input - sort by
+$('select').change(function () {
   var sortBy = $(this).find('option:selected').val();
   app.sortPage(sortBy);
   console.log(sortBy);
 });
 
-
+// Click on the pin button
+$('.posts').on('click', '.pin-item', function () {
+  var $post = $(this).closest('.new-city');
+  $post.addClass('pinned');
+  var index = $post.index();
+  app.pinItem(index, $post);
+});
 
 // Event for showing the loading image when waiting for ajax response
 $(document).ajaxSend(function () {

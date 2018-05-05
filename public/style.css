@@ -57,6 +57,13 @@ h1 {
   color: #000;
 }
 
+.pinned .pin-item {
+  -ms-transform: rotate(45deg); /* IE 9 */
+  -webkit-transform: rotate(45deg); /* Safari 3-8 */
+  transform: rotate(45deg);
+  color: rgb(31, 194, 172);
+}
+
 .remove-item:hover {
   color: rgba(255, 0, 0, 0.7);
 }
