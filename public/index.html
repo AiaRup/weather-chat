@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.11/css/all.css">
-  <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css?family=Courgette" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
   <title>Weather Chat</title>
 </head>
 
@@ -18,7 +18,7 @@
     <form class="search-city">
       <div class="form-row">
         <div class="form-group col-md-9 input-group">
-            <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
+            <input type="text" autocomplete="on" id="input-temp" placeholder="Enter City" class="form-control">
             <span class="input-group-btn">
               <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
             </span>
@@ -30,8 +30,8 @@
             <option value="2">Temperature (coldest 1st)</option>
             <option value="3">Date (latest 1st)</option>
           </select>
-        </div>
-      </div>
+        </div> <!-- </div> form-group -->
+      </div><!-- </div> form-row -->
     </form>
     <div class="invalid-city"></div>
     <div id="ajax-loader">
@@ -41,9 +41,9 @@
     <div class="posts"></div>
     </div>
 
-    <script type="text/javascript" src="/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="datejs/src/core/parser.js"></script>
-    <script type="text/javascript" src="/script.js"></script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
 
 </html>

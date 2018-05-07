@@ -51,28 +51,42 @@ var weatherApp = function () {
   // render all comments on the page
   var _renderAllComments = function () {
     $('.comments').empty();
-
-    for (var i = 0; i < cities.length; i += 1) {
+    // go through the cities array
+    for (let i = 0; i < cities.length; i += 1) {
       // the current post in the iteration
       var city = cities[i];
       // finding the city element in the page
       var $post = $('.posts').find('.new-city').eq(i);
       // iterate through each comment in our city comments
       var output = '';
-      for (var j = 0; j < city.comments.length; j += 1) {
+      for (let j = 0; j < city.comments.length; j += 1) {
         var comment = city.comments[j];
         output += `<p class="comment"><i class="far fa-comment"></i>${comment}</p>`;
       }
       $post.find('.comments').append(output);
     }
+    // go through the pinned array
+    for (var i = 0; i < pinnedCities.length; i += 1) {
+      // the current post in the iteration
+      var pinnedCity = pinnedCities[i];
+      // finding the city element in the page
+      var $pinnedPost = $('.pinnedPosts').find('.new-city').eq(i);
+      // iterate through each comment in our city comments
+      var output2 = '';
+      for (var j = 0; j < pinnedCity.comments.length; j += 1) {
+        var pinnedComment = pinnedCity.comments[j];
+        output2 += `<p class="comment"><i class="far fa-comment"></i>${pinnedComment}</p>`;
+      }
+      $pinnedPost.find('.comments').append(output2);
+    }
   };
 
   // update comments of one post on the page
-  var _updateComment = function (post, postIndex) {
+  var _updateComment = function (post, postIndex, array) {
     post.find('.comments').empty();
     var output = '';
-    for (let i = 0; i < cities[postIndex].comments.length; i++) {
-      output += `<p class="comment"><i class="far fa-comment"></i>${cities[postIndex].comments[i]}</p>`;
+    for (let i = 0; i < array[postIndex].comments.length; i++) {
+      output += `<p class="comment"><i class="far fa-comment"></i>${array[postIndex].comments[i]}</p>`;
     }
     post.find('.comments').append(output);
   };
@@ -92,34 +106,38 @@ var weatherApp = function () {
 
   /****Return Functions*****/
   // add new search-city to the page
-  var updatePosts = function () {
-    $('.posts').empty();
+  var updatePosts = function (codeForPostSection) {
+    var $postSection = codeForPostSection === 0 ? $('.pinnedPosts') : $('.posts');
+    var array = codeForPostSection === 0 ? pinnedCities : cities;
+    var postClass = codeForPostSection === 0 ? 'class="new-city pinned"' : 'class="new-city"';
+    // empty the corresponding post section in the page
+    $postSection.empty();
 
     var newPost = '',
       commentForm = '';
     var button = '<span class="input-group-btn"><button type="submit" class="btn btn-success add-comment">Comment</button></span>';
     var commentDiv = '<div class="comments"></div>';
-    var trash = '<a href="" title="delete this post" class="remove-item"><i class="far fa-trash-alt"></i></a>';
-    var pin = '<a href="" title="pin this post" class="pin-item"><i class="fas fa-thumbtack"></i></a>';
+    var trash = '<i class="far fa-trash-alt remove-item"></i>';
+    var pin = '<i class="fas fa-thumbtack pin-item"></i>';
 
-    for (let i = 0; i < cities.length; i++) {
-      const object = cities[i];
+    for (let i = 0; i < array.length; i++) {
+      const object = array[i];
       // create the comment form
       commentForm = `<form class="input-group post-form"><input type="text" id="input-comment" placeholder="Comment about the weather in ${object.city} "class="form-control"> ${button} </form><div class="invalid-comment"></div>`;
       // create the post div
-      newPost += '<div class="new-city">' +
+      newPost += `<div ${postClass}>` +
         `<div class="header-post">
        <h4 class="city"> ${object.city}, ${object.country}</h4><div class="icons">${pin} ${trash}</div></div>` +
         `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} <img src="http://openweathermap.org/img/w/${object.icon}.png">
        <span class="temp">${object.description}</span>
        </div> ${commentDiv} ${commentForm}</div></div>`;
     }
-    $('.posts').append(newPost);
+    $postSection.append(newPost);
   };
 
   //remove item from cities cart
-  var removePost = function (index, array) {
-    array = array === 'pinnedCities' ? pinnedCities : cities;
+  var removePost = function (index, post) {
+    var array = post.hasClass('pinned') ? pinnedCities : cities;
     for (let i = 0; i < array.length; i++) {
       if (i === index) {
         array.splice(index, 1);
@@ -130,10 +148,11 @@ var weatherApp = function () {
 
   // add comment to the array
   var addComment = function (comment, post) {
-    for (let i = 0; i < cities.length; i++) {
+    var array = post.hasClass('pinned') ? pinnedCities : cities;
+    for (let i = 0; i < array.length; i++) {
       if (i === post.index()) {
-        cities[i].comments.push(comment);
-        _updateComment(post, i);
+        array[i].comments.push(comment);
+        _updateComment(post, i, array);
       }
     }
     // update local storage
@@ -144,9 +163,9 @@ var weatherApp = function () {
   var fetch = function (urlCity) {
     $.get(urlCity).then(function (data) {
       _addPost(data);
-      updatePosts();
+      updatePosts(1);
       _renderAllComments();
-    }).catch(function (error) {
+    }).catch(function () {
       $('.invalid-city').text('No city was found, try another search').show().fadeOut(5000);
     });
   };
@@ -155,29 +174,45 @@ var weatherApp = function () {
   var sortPage = function (sortChoice) {
     // check what option of sorting was selected
     cities = (sortChoice == 1) ? cities.sort(_sortByCity) : (sortChoice == 2 ? cities.sort(_sortByTemp) : cities.sort(_sortByDate));
-    updatePosts();
+    updatePosts(1);
+    _renderAllComments();
   };
 
+  // Pin or unpin item to the top of the posts
   var pinItem = function (postIndex, post) {
-    //pin the post to the page
-    $('.pinnedPosts').append(post);
-    // add the post to the pinned array and remove from cities array
-    for (let i = 0; i < cities.length; i++) {
-      if (postIndex === i) {
-        pinnedCities.unshift(cities[i]);
-        cities.splice(i, 1);
+    if (post.hasClass('pinned')) {
+      //pin the post to the top of the page
+      $('.pinnedPosts').prepend(post);
+      // add the post to the pinned array and remove from cities array
+      for (let i = 0; i < cities.length; i++) {
+        if (postIndex === i) {
+          pinnedCities.unshift(cities[i]);
+          cities.splice(i, 1);
+        }
+      }
+    } else {
+      for (let i = 0; i < pinnedCities.length; i++) {
+        if (postIndex === i) {
+          // update the pinned post section
+          $('.pinnedPosts').find('.new-city').eq(i).remove();
+          cities.unshift(pinnedCities[i]);
+          pinnedCities.splice(i, 1);
+        }
       }
     }
     // save to local storage and update the cities post
     _saveToLocalStorage();
-    updatePosts();
+    // update the unpinned posts section
+    updatePosts(1);
+    _renderAllComments();
   };
 
-  // update the array as soon as the page loads
+  // update the arrays as soon as the page loads
   cities = _getFromLocalStorage().storageCities;
   pinnedCities = _getFromLocalStorage().storagePinned;
-
-  updatePosts();
+  // display all posts the page loads
+  updatePosts(1);
+  updatePosts(0);
   _renderAllComments();
 
   return {
@@ -185,7 +220,7 @@ var weatherApp = function () {
     removePost: removePost,
     addComment: addComment,
     sortPage: sortPage,
-    pinItem: pinItem
+    pinItem: pinItem,
   };
 };
 
@@ -193,7 +228,7 @@ var app = weatherApp();
 
 /****EVENT-LISTENERS****/
 
-// click get-temp in city from the api
+// click search city- Get-temp
 $('#getTemp').on('click keypress', function (e) {
   e.preventDefault();
   var city = $('#input-temp').val();
@@ -203,7 +238,6 @@ $('#getTemp').on('click keypress', function (e) {
     $('.invalid-city').show().text('Please enter city\'s name.').fadeOut(5000);
     return;
   }
-
   // check if enter was the key that was presssed
   if (e.which === 13 || e.type === 'click') {
     app.fetch(url);
@@ -213,19 +247,17 @@ $('#getTemp').on('click keypress', function (e) {
 });
 
 // Click on remove post
-$('.posts').on('click', '.remove-item', function () {
+$('.posts, .pinnedPosts').on('click', '.remove-item', function () {
   var $post = $(this).closest('.new-city');
   var index = $post.index();
-  var array;
   // Check  if post is pinned or not and remove from the corresponding array
-  array = $post.hasClass('pinned') ? 'pinnedCities' : 'cities';
-  app.removePost(index, array);
+  app.removePost(index, $post);
   // remove from page
   $post.remove();
 });
 
 // Click on add comment
-$('.posts').on('click keypress', '.add-comment', function (e) {
+$('.posts, .pinnedPosts').on('click keypress', '.add-comment', function (e) {
   e.preventDefault();
   var $post = $(this).closest('.new-city');
   var commentText = $(this).parent().siblings('#input-comment').val();
@@ -242,19 +274,19 @@ $('.posts').on('click keypress', '.add-comment', function (e) {
   }
 });
 
+// Click on the pin button
+$('.posts, .pinnedPosts').on('click', '.pin-item', function () {
+  var $post = $(this).closest('.new-city');
+  // add or remove class pinned
+  $post.toggleClass('pinned');
+  var index = $post.index();
+  app.pinItem(index, $post);
+});
+
 // Check select input - sort by
 $('select').change(function () {
   var sortBy = $(this).find('option:selected').val();
   app.sortPage(sortBy);
-  console.log(sortBy);
-});
-
-// Click on the pin button
-$('.posts').on('click', '.pin-item', function () {
-  var $post = $(this).closest('.new-city');
-  $post.addClass('pinned');
-  var index = $post.index();
-  app.pinItem(index, $post);
 });
 
 // Event for showing the loading image when waiting for ajax response
