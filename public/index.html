@@ -15,10 +15,10 @@
 <body>
   <div class="container">
     <h1>Weather Chat</h1>
-    <form class="search-city">
+    <form class="search-city" autocomplete="off">
       <div class="form-row">
-        <div class="form-group col-md-9 input-group">
-            <input type="text" autocomplete="on" id="input-temp" placeholder="Enter City" class="form-control">
+        <div class="form-group input-group col-md-9 ">
+            <input type="text" id="input-temp" placeholder="Enter City" class="form-control autocomplete">
             <span class="input-group-btn">
               <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
             </span>
@@ -44,6 +44,8 @@
     <script type="text/javascript" src="jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="datejs/src/core/parser.js"></script>
     <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="autocomplete.js"></script>
+
 </body>
 
 </html>

@@ -2,8 +2,10 @@ var weatherApp = function () {
   // declare some variables
   var cities = [];
   var pinnedCities = [];
+  var userSearches = [];
   var STORAGE_ID = 'searchCities';
   var STORAGE_ID_PN = 'pinnedCities';
+  var STORAGE_ID_US = 'userSearches';
 
   /***Internal Functions***/
   //stringify and save our entire cities array.
@@ -16,10 +18,34 @@ var weatherApp = function () {
   var _getFromLocalStorage = function () {
     var storageCities = JSON.parse(localStorage.getItem(STORAGE_ID) || '[]');
     var storagePinned = JSON.parse(localStorage.getItem(STORAGE_ID_PN) || '[]');
+    var userSearches = JSON.parse(localStorage.getItem(STORAGE_ID_US) || '[]');
     return {
       storageCities: storageCities,
-      storagePinned: storagePinned
+      storagePinned: storagePinned,
+      userSearches: userSearches
     };
+  };
+
+  var _saveToLocalStorageUserSearch = function () {
+    localStorage.setItem(STORAGE_ID_US, JSON.stringify(userSearches));
+  };
+
+    // check if the city exsit in the array
+  var _ifCityExist = function(city, temp, array) {
+    for (let i = 0; i < array.length; i++) {
+      if (city === array[i].name) {
+        if (temp !== array[i].temp.celsius) {
+          return {
+            array: array,
+            index: i
+          };
+        }
+        else {
+          return 1;
+        }
+      }
+    }
+    return 0;
   };
 
   // add new city to the array
@@ -29,9 +55,10 @@ var weatherApp = function () {
     var timeInMs = new Date(Date.now());
     var cityPost = {
       city: data.name,
+      country: data.sys.country,
       description: data.weather[0].description,
       icon: data.weather[0].icon,
-      country: data.sys.country,
+
       temp: {
         celsius: Math.round(data.main.temp),
         fahrenheit: Math.round(data.main.temp * 1.8)
@@ -160,11 +187,19 @@ var weatherApp = function () {
   };
 
   // get data from the weather api
-  var fetch = function (urlCity) {
+  var fetch = function (urlCity, city) {
     $.get(urlCity).then(function (data) {
       _addPost(data);
       updatePosts(1);
       _renderAllComments();
+      // save the name of the searched city in local storage
+      for (var i = 0; i < userSearches.length; i++) {
+        if (userSearches[i] == city) {
+          return;
+        }
+      }
+      userSearches.push(city);
+      _saveToLocalStorageUserSearch();
     }).catch(function () {
       $('.invalid-city').text('No city was found, try another search').show().fadeOut(5000);
     });
@@ -210,6 +245,7 @@ var weatherApp = function () {
   // update the arrays as soon as the page loads
   cities = _getFromLocalStorage().storageCities;
   pinnedCities = _getFromLocalStorage().storagePinned;
+  userSearches = _getFromLocalStorage().userSearches;
   // display all posts the page loads
   updatePosts(1);
   updatePosts(0);
@@ -240,7 +276,7 @@ $('#getTemp').on('click keypress', function (e) {
   }
   // check if enter was the key that was presssed
   if (e.which === 13 || e.type === 'click') {
-    app.fetch(url);
+    app.fetch(url, city);
     // empty input value
     $('#input-temp').val('');
   }
