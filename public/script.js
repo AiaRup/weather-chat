@@ -1,11 +1,11 @@
 var weatherApp = function () {
   // declare some variables
-  var cities = [];
-  var pinnedCities = [];
-  var userSearches = [];
-  var STORAGE_ID = 'searchCities';
-  var STORAGE_ID_PN = 'pinnedCities';
-  var STORAGE_ID_US = 'userSearches';
+  var cities = [],
+    pinnedCities = [],
+    userSearches = [];
+  const STORAGE_ID = 'searchCities',
+    STORAGE_ID_PN = 'pinnedCities',
+    STORAGE_ID_US = 'userSearches';
 
   /***Internal Functions***/
   //stringify and save our entire cities array.
@@ -49,12 +49,6 @@ var weatherApp = function () {
 
   // add new city to the array
   var _addPost = function (data) {
-    console.log(data);
-    // var city = data.name;
-    // var tempCel = Math.round(data.main.temp);
-
-    // var result =  _ifCityExist(city, tempCel, cities);
-
     var timeInMs = new Date(Date.now());
     var cityPost = {
       city: data.name,
@@ -111,17 +105,7 @@ var weatherApp = function () {
     }
   };
 
-  // update comments of one post on the page
-  var _updateComment = function (post, postIndex, array) {
-    post.find('.comments').empty();
-    var output = '';
-    for (let i = 0; i < array[postIndex].comments.length; i++) {
-      output += `<p class="comment"><i class="far fa-comment"></i>${array[postIndex].comments[i]}</p>`;
-    }
-    post.find('.comments').append(output);
-  };
-
-  // update the new poat that was created
+  // update the new post that was created
   var _updateNewPost = function () {
     var button = '<span class="input-group-btn"><button type="submit" class="btn btn-success add-comment">Comment</button></span>';
     var commentDiv = '<div class="comments"></div>';
@@ -204,7 +188,7 @@ var weatherApp = function () {
     for (let i = 0; i < array.length; i++) {
       if (i === post.index()) {
         array[i].comments.push(comment);
-        _updateComment(post, i, array);
+        post.find('.comments').append(`<p class="comment"><i class="far fa-comment"></i>${comment}</p>`);
       }
     }
     // update local storage
@@ -216,8 +200,6 @@ var weatherApp = function () {
     $.get(urlCity).then(function (data) {
       _addPost(data);
       _updateNewPost();
-      // updatePosts(1);
-      // _renderAllComments();
       // save the name of the searched city in local storage
       for (var i = 0; i < userSearches.length; i++) {
         if (userSearches[i] == city) {
