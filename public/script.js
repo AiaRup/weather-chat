@@ -191,7 +191,6 @@ var weatherApp = function () {
         post.find('.comments').append(`<p class="comment"><i class="far fa-comment"></i>${comment}</p>`);
       }
     }
-    // update local storage
     _saveToLocalStorage();
   };
 
@@ -243,7 +242,6 @@ var weatherApp = function () {
         }
       }
     }
-    // save to local storage and update the cities post
     _saveToLocalStorage();
     // update the unpinned posts section
     updatePosts(1);
