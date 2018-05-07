@@ -16,35 +16,39 @@
   <div class="container">
     <h1>Weather Chat</h1>
     <form class="search-city" autocomplete="off">
-      <div class="form-row">
-        <div class="form-group input-group col-md-9 ">
-            <input type="text" id="input-temp" placeholder="Enter City" class="form-control autocomplete">
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
-            </span>
+      <div class="row">
+        <div class="col-md-9">
+          <div class="autocomplete">
+            <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
         </div>
-        <div class="form-group col-md-3">
+        <!-- </div> col-md-9 -->
+        <div class="col-md-3">
           <select class="form-control custom-select" id="sort-by">
             <option selected>Sort by...</option>
             <option value="1">City (alphabetic)</option>
             <option value="2">Temperature (coldest 1st)</option>
             <option value="3">Date (latest 1st)</option>
           </select>
-        </div> <!-- </div> form-group -->
-      </div><!-- </div> form-row -->
+        </div>
+        <!-- </div> col-md-3 -->
+      </div>
+      <!-- </div> row -->
     </form>
+
     <div class="invalid-city"></div>
     <div id="ajax-loader">
       <img src="ajax-loader.gif" alt="ajax-loader">
     </div>
     <div class="pinnedPosts"></div>
     <div class="posts"></div>
-    </div>
+  </div>
 
-    <script type="text/javascript" src="jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="datejs/src/core/parser.js"></script>
-    <script type="text/javascript" src="script.js"></script>
-    <script type="text/javascript" src="autocomplete.js"></script>
+  <script type="text/javascript" src="jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="datejs/src/core/parser.js"></script>
+  <script type="text/javascript" src="script.js"></script>
+  <script type="text/javascript" src="autocomplete.js"></script>
 
 </body>
 

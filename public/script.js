@@ -30,8 +30,8 @@ var weatherApp = function () {
     localStorage.setItem(STORAGE_ID_US, JSON.stringify(userSearches));
   };
 
-    // check if the city exsit in the array
-  var _ifCityExist = function(city, temp, array) {
+  // check if the city exsit in the array
+  var _ifCityExist = function (city, temp, array) {
     for (let i = 0; i < array.length; i++) {
       if (city === array[i].name) {
         if (temp !== array[i].temp.celsius) {
@@ -39,8 +39,7 @@ var weatherApp = function () {
             array: array,
             index: i
           };
-        }
-        else {
+        } else {
           return 1;
         }
       }
@@ -51,6 +50,10 @@ var weatherApp = function () {
   // add new city to the array
   var _addPost = function (data) {
     console.log(data);
+    // var city = data.name;
+    // var tempCel = Math.round(data.main.temp);
+
+    // var result =  _ifCityExist(city, tempCel, cities);
 
     var timeInMs = new Date(Date.now());
     var cityPost = {
@@ -117,6 +120,28 @@ var weatherApp = function () {
     }
     post.find('.comments').append(output);
   };
+
+  // update the new poat that was created
+  var _updateNewPost = function () {
+    var button = '<span class="input-group-btn"><button type="submit" class="btn btn-success add-comment">Comment</button></span>';
+    var commentDiv = '<div class="comments"></div>';
+    var trash = '<i class="far fa-trash-alt remove-item"></i>';
+    var pin = '<i class="fas fa-thumbtack pin-item"></i>';
+
+    const object = cities[0];
+    // create the comment form
+    var commentForm = `<form class="input-group post-form"><input type="text" id="input-comment" placeholder="Comment about the weather in ${object.city} "class="form-control"> ${button} </form><div class="invalid-comment"></div>`;
+    // create the post div
+    var newPost = '<div class="new-city">' +
+      `<div class="header-post">
+       <h4 class="city"> ${object.city}, ${object.country}</h4><div class="icons">${pin} ${trash}</div></div>` +
+      `<div class="data-api"><span class="temp"> ${object.temp.celsius} &#8451 / ${object.temp.fahrenheit} &#8457</span> at ${object.time.hour} on ${object.time.date} <img src="http://openweathermap.org/img/w/${object.icon}.png">
+       <span class="temp">${object.description}</span>
+       </div> ${commentDiv} ${commentForm}</div></div>`;
+    // update the page with the new post
+    $('.posts').prepend(newPost);
+  };
+
 
   // sorting functions
   function _sortByCity(a, b) {
@@ -190,8 +215,9 @@ var weatherApp = function () {
   var fetch = function (urlCity, city) {
     $.get(urlCity).then(function (data) {
       _addPost(data);
-      updatePosts(1);
-      _renderAllComments();
+      _updateNewPost();
+      // updatePosts(1);
+      // _renderAllComments();
       // save the name of the searched city in local storage
       for (var i = 0; i < userSearches.length; i++) {
         if (userSearches[i] == city) {

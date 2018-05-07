@@ -1,5 +1,4 @@
 /**** general ****/
-
 * {
   box-sizing: border-box;
 }
@@ -31,6 +30,10 @@ h1 {
 
 .search-city {
   margin-top: 20px;
+}
+
+.col-md-9 {
+  display: flex;
 }
 
 #ajax-loader {
@@ -125,6 +128,7 @@ h1 {
 
 .autocomplete {
   position: relative;
+  flex-grow: 1;
 }
 
 .autocomplete-items {
