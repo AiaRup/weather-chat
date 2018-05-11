@@ -6,11 +6,14 @@ function autocomplete(inp) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
+  var searches = _getFromLocalStorage();
   /*execute a function when someone writes in the text field:*/
   inp.addEventListener('input', function (e) {
     // get the updated array of searches from local atorage
-    var searches = _getFromLocalStorage();
-    console.log(searches);
+    if($('#input-temp').val() === '') {
+      searches = _getFromLocalStorage();
+      console.log(searches);
+    }
 
     var a, b, i, val = this.value;
     /*close any already open lists of autocompleted values*/
