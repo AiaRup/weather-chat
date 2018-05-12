@@ -14,7 +14,6 @@ var weatherApp = function () {
   //get our cities array out of local storage and convert them back to JS objects
   var _getFromLocalStorage = function () {
     var storageCities = JSON.parse(localStorage.getItem(STORAGE_ID) || '[]');
-
     var userSearches = JSON.parse(localStorage.getItem(STORAGE_ID_US) || '[]');
     return {
       storageCities: storageCities,
@@ -79,7 +78,8 @@ var weatherApp = function () {
     } else { // add new weather data to existing city in the array
       cities[result].oldWeather.push(cities[result].currentWeather);
       cities[result].currentWeather = currentWeather;
-      _updateCity(result, cities[result].isPinned, 1); // update page
+      _updateCity(result, cities[result].isPinned, 0); // update page - section old and section current
+      _updateCity(result, cities[result].isPinned, 1);
       _renderAllComments();
     }
     _saveToLocalStorage();
@@ -135,23 +135,27 @@ var weatherApp = function () {
 
   // update exsit post on the page
   var _updateCity = function (index, isPinned, status) {
-    // status = status ? cities[index].currentWeather : cities[index].oldWeather;
     const city = cities[index].city;
+    var section = isPinned ? $('.pinnedPosts') : $('.posts');
+    var $post = section.find(`#${city}`);
+
     var newSection = '';
     if (!status) { // go through old weather
-      for (var j = 0; j <cities[index].oldWeather.length; j++) {
-        newSection += `<div class="data-api"><span class="temp"> ${cities[index].oldWeather[j].temp.celsius} &#8451 / ${cities[index].oldWeather[j].temp.fahrenheit} &#8457</span> at ${cities[index].oldWeather[j].time.hour} on ${cities[index].oldWeather[j].time.date} <img src="http://openweathermap.org/img/w/${cities[index].oldWeather[j].icon}.png">
+      $post.find('.old-weather').empty();
+      for (var j = 0; j < cities[index].oldWeather.length; j++) {
+        newSection = `<div class="data-api"><span class="temp"> ${cities[index].oldWeather[j].temp.celsius} &#8451 / ${cities[index].oldWeather[j].temp.fahrenheit} &#8457</span> at ${cities[index].oldWeather[j].time.hour} on ${cities[index].oldWeather[j].time.date} <img src="http://openweathermap.org/img/w/${cities[index].oldWeather[j].icon}.png">
        <span class="temp">${cities[index].oldWeather[j].description}</span><div class="comments"></div></div>`;
+
+        $post.find('.old-weather').append(newSection);
+
       }
     } else { // update only currentWeather section
       newSection = `<div class="data-api"><span class="temp"> ${cities[index].currentWeather.temp.celsius} &#8451 / ${cities[index].currentWeather.temp.fahrenheit} &#8457</span> at ${cities[index].currentWeather.time.hour} on ${cities[index].currentWeather.time.date} <img src="http://openweathermap.org/img/w/${cities[index].currentWeather.icon}.png">
       <span class="temp">${cities[index].currentWeather.description}</span><div class="comments"></div></div>`;
+      $post.find('.current-weather').empty();
+      $post.find('.current-weather').append(newSection);
     }
 
-    var section = isPinned ? $('.pinnedPosts') : $('.posts');
-    var $post = section.find(`#${city}`);
-
-    $post.find('.old-weather').append(newSection);
     _renderAllComments();
   };
 
@@ -364,11 +368,6 @@ $('.posts, .pinnedPosts').on('click', '.current-weather .comment', function () {
 });
 
 // Check select input - sort by
-// var clicks = {
-//   cityClicks: 0,
-//   dateClicks: 0,
-//   tempClicks: 0
-// };
 var clicks = 0;
 
 $('select').change(function () {
@@ -384,8 +383,13 @@ $('select').change(function () {
     clicks++;
   }
   app.sortPage(sortBy, clicks);
+  // to enable the user to click again on an already selected option
+  $('select option:selected').prop('selected', false);
+  $('select option:first').prop('selected', 'selected');
 
 });
+
+
 
 // Event for showing the loading image when waiting for ajax response
 $(document).ajaxSend(function () {
