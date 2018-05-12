@@ -151,7 +151,7 @@ var weatherApp = function () {
       }
     } else { // update only currentWeather section
       newSection = `<div class="data-api"><span class="temp"> ${cities[index].currentWeather.temp.celsius} &#8451 / ${cities[index].currentWeather.temp.fahrenheit} &#8457</span> at ${cities[index].currentWeather.time.hour} on ${cities[index].currentWeather.time.date} <img src="http://openweathermap.org/img/w/${cities[index].currentWeather.icon}.png">
-      <span class="temp">${cities[index].currentWeather.description}</span><div class="comments"></div></div>`;
+      <span class="temp">${cities[index].currentWeather.description}</span></div><div class="comments"></div>`;
       $post.find('.current-weather').empty();
       $post.find('.current-weather').append(newSection);
     }
