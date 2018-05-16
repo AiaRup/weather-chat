@@ -172,17 +172,7 @@ var weatherApp = function () {
     return b.currentWeather.time.timeInMs - a.currentWeather.time.timeInMs;
   }
 
-  function _sortByCityASE(a, b) {
-    return (a.city > b.city) ? -1 : ((b.city > a.city) ? 1 : 0);
-  }
 
-  function _sortByTempASE(a, b) {
-    return b.currentWeather.temp.celsius - a.currentWeather.temp.celsius;
-  }
-
-  function _sortByDateASE(a, b) {
-    return a.currentWeather.time.timeInMs - b.currentWeather.time.timeInMs;
-  }
 
   /****Return Functions*****/
   // add new search-city to the page
@@ -242,10 +232,14 @@ var weatherApp = function () {
   // sorting the cities on the page
   var sortPage = function (sortChoice, clicks) {
     // check what option of sorting was selected
+    cities = (sortChoice == 1) ? cities.sort(_sortByCityDES) : (sortChoice == 2 ? cities.sort(_sortByTempDES) : cities.sort(_sortByDateDES));
+    //show icon arrow down
+    $('.sort-icon').html('<i class="fas fa-arrow-down"></i>');
+
     if (clicks % 2 == 0) {
-      cities = (sortChoice == 1) ? cities.sort(_sortByCityDES) : (sortChoice == 2 ? cities.sort(_sortByTempDES) : cities.sort(_sortByDateDES));
-    } else {
-      cities = (sortChoice == 1) ? cities.sort(_sortByCityASE) : (sortChoice == 2 ? cities.sort(_sortByTempASE) : cities.sort(_sortByDateASE));
+      cities.reverse();
+      //show icon arrow up
+      $('.sort-icon').html('<i class="fas fa-arrow-up"></i>');
     }
     updateAllPosts();
     _renderAllComments();
@@ -372,24 +366,12 @@ var clicks = 0;
 
 $('select').change(function () {
   var sortBy = $(this).find('option:selected').val();
-  if (sortBy == 1) { // by sity
-    clicks % 2 == 0 ? $('.sort-icon').html('<i class="fas fa-sort-alpha-down"></i>') : $('.sort-icon').html('<i class="fas fa-sort-alpha-up"></i>');
-    clicks++;
-  } else if (sortBy == 2) { // by temp
-    clicks % 2 == 0 ? $('.sort-icon').html('<i class="fas fa-sort-numeric-down"></i>') : $('.sort-icon').html('<i class="fas fa-sort-numeric-up"></i>');
-    clicks++;
-  } else {
-    clicks % 2 == 0 ? $('.sort-icon').html('<i class="fas fa-arrow-down"></i>') : $('.sort-icon').html('<i class="fas fa-arrow-up"></i>');
-    clicks++;
-  }
+  clicks++;
   app.sortPage(sortBy, clicks);
   // to enable the user to click again on an already selected option
   $('select option:selected').prop('selected', false);
   $('select option:first').prop('selected', 'selected');
-
 });
-
-
 
 // Event for showing the loading image when waiting for ajax response
 $(document).ajaxSend(function () {
