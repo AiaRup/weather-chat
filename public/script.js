@@ -59,7 +59,7 @@ var weatherApp = function () {
       comments: [],
     };
 
-    // create new city
+    // create new city if not exist
     if (result === true) {
       var cityPost = {
         city: data.name,
@@ -70,13 +70,13 @@ var weatherApp = function () {
         oldWeather: []
       };
       cities.push(cityPost);
-      _addNewPostToPage(cities.length - 1, false); // update the page
+      _addNewPostToPage(cities.length - 1, false);
     } else if (result === false) { // city already exist and updated on the page
       $('.invalid-city').show().text('There is already a post for the city you searched with the current weather.').fadeOut(5000);
     } else { // add new weather data to existing city in the array
       cities[result].oldWeather.push(cities[result].currentWeather);
       cities[result].currentWeather = currentWeather;
-      _updateCity(result, cities[result].isPinned, 0); // update page - section old and section current
+      _updateCity(result, cities[result].isPinned, 0); // update section old and section current
       _updateCity(result, cities[result].isPinned, 1);
       _renderAllComments();
     }
@@ -87,7 +87,6 @@ var weatherApp = function () {
   var _renderAllComments = function () {
     $('.comments').empty();
     for (let i = 0; i < cities.length; i += 1) {
-      // the current post in the iteration
       var city = cities[i];
       var section = city.isPinned ? $('.pinnedPosts') : $('.posts');
       // finding the city element in the page
@@ -186,7 +185,7 @@ var weatherApp = function () {
     }
   };
 
-  //remove item from cities cart
+  //remove item from cities array
   var removePost = function (postID) {
     for (let i = 0; i < cities.length; i++) {
       if (cities[i].city === postID) {
@@ -243,7 +242,7 @@ var weatherApp = function () {
     _renderAllComments();
   };
 
-  // Pin or unpin item to the top of the posts
+  // Pin or unpin item to the top of the page
   var pinItem = function (postID, post) {
     for (var i = 0; i < cities.length; i++) {
       if (cities[i].city === postID) {
@@ -251,7 +250,7 @@ var weatherApp = function () {
       }
     }
     if (post.hasClass('pinned')) {
-      // update the property
+      // update the property pinned of the city object
       cities[index].isPinned = true;
       post.remove();
       $('.pinnedPosts').prepend(post);
@@ -286,12 +285,12 @@ var weatherApp = function () {
   _renderAllComments();
 
   return {
-    fetch: fetch,
-    removePost: removePost,
-    addComment: addComment,
-    sortPage: sortPage,
-    pinItem: pinItem,
-    removeComment: removeComment
+    fetch,
+    removePost,
+    addComment,
+    sortPage,
+    pinItem,
+    removeComment
   };
 };
 
@@ -303,17 +302,15 @@ var app = weatherApp();
 $('.search-city').on('submit', function (e) {
   e.preventDefault();
   var city = $('#input-temp').val();
-  var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=metric&sunits=imperial&appid=d703871f861842b79c60988ccf3b17ec';
   // check if input is empty
   if (city === '') {
     $('.invalid-city').show().text('Please enter city\'s name.').fadeOut(5000);
     return;
   }
-  // check if enter was the key that was presssed
+  var url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&sunits=imperial&appid=d703871f861842b79c60988ccf3b17ec`;
   app.fetch(url, city);
   // empty input value
   $('#input-temp').val('');
-  // }
 });
 
 // Click on remove post
@@ -336,7 +333,6 @@ $('.posts, .pinnedPosts').on('submit', '.post-form', function (e) {
     $(this).siblings('.invalid-comment').text('Please write some text in the comment.').show().fadeOut(5000);
     return;
   }
-  // check if enter was the key that was presssed
   app.addComment(commentText, $post);
   // empty input value
   $(this).find('#input-comment').val('');
@@ -351,7 +347,7 @@ $('.posts, .pinnedPosts').on('click', '.pin-item', function () {
   app.pinItem(postID, $post);
 });
 
-// Click on comment to remove
+// Click on remove comment
 $('.posts, .pinnedPosts').on('click', '.current-weather .comment', function () {
   var $post = $(this).closest('.new-city');
   var commentIndex = $(this).index();
