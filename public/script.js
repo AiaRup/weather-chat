@@ -1,9 +1,7 @@
 var weatherApp = function () {
   // declare some variables
-  var cities = [],
-    userSearches = [];
-  const STORAGE_ID = 'searchCities',
-    STORAGE_ID_US = 'userSearches';
+  var cities = [], userSearches = [];
+  const STORAGE_ID = 'searchCities', STORAGE_ID_US = 'userSearches';
 
   /***Internal Functions***/
   //stringify and save our entire cities array.
@@ -128,6 +126,7 @@ var weatherApp = function () {
        <h4 class="city"> ${object.city}, ${object.country}</h4><div class="icons">${pin} ${trash}</div></div><div class="totalComments">Total Comments: <span class="numComment">${object.totalComments}</span></div>` + '<div class="old-weather"></div>' +
       `<div class="current-weather"><div class="data-api"><span class="temp"> ${object.currentWeather.temp.celsius} &#8451 / ${object.currentWeather.temp.fahrenheit} &#8457</span> at ${object.currentWeather.time.hour} on ${object.currentWeather.time.date} <img src="http://openweathermap.org/img/w/${object.currentWeather.icon}.png">
        <span class="temp">${object.currentWeather.description}</span>
+       <img src="img/icon-new.png">
        </div>${commentDiv}</div>${commentForm}</div></div>`;
     // update the page with the new post
     isPinned ? $('.pinnedPosts').prepend(newPost) : $('.posts').prepend(newPost);
@@ -151,7 +150,7 @@ var weatherApp = function () {
       }
     } else { // update only currentWeather section
       newSection = `<div class="data-api"><span class="temp"> ${cities[index].currentWeather.temp.celsius} &#8451 / ${cities[index].currentWeather.temp.fahrenheit} &#8457</span> at ${cities[index].currentWeather.time.hour} on ${cities[index].currentWeather.time.date} <img src="http://openweathermap.org/img/w/${cities[index].currentWeather.icon}.png">
-      <span class="temp">${cities[index].currentWeather.description}</span></div><div class="comments"></div>`;
+      <span class="temp">${cities[index].currentWeather.description}</span><img src="img/icon-new.png"></div><div class="comments"></div>`;
       $post.find('.current-weather').empty();
       $post.find('.current-weather').append(newSection);
     }
@@ -171,7 +170,6 @@ var weatherApp = function () {
   function _sortByDateDES(a, b) {
     return b.currentWeather.time.timeInMs - a.currentWeather.time.timeInMs;
   }
-
 
 
   /****Return Functions*****/
