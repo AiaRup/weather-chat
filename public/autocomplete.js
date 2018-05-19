@@ -10,7 +10,7 @@ function autocomplete(inp) {
   /*execute a function when someone writes in the text field:*/
   inp.addEventListener('input', function (e) {
     // get the updated array of searches from local atorage
-    if($('#input-temp').val() === '') {
+    if($('#input-cityName').val() === '') {
       searches = _getFromLocalStorage();
       console.log(searches);
     }
@@ -111,4 +111,4 @@ function autocomplete(inp) {
   });
 }
 
-autocomplete(document.getElementById('input-temp'));
+autocomplete(document.getElementById('input-cityName'));

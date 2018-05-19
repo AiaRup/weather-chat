@@ -15,11 +15,11 @@
 <body>
   <div class="container">
     <h1>Weather Chat</h1>
-    <form class="search-city" autocomplete="off">
+    <form class="search-city-form" autocomplete="off">
       <div class="row">
         <div class="col-md-9">
           <div class="autocomplete">
-            <input type="text" id="input-temp" placeholder="Enter City" class="form-control">
+            <input type="text" id="input-cityName" placeholder="Enter City" class="form-control">
           </div>
           <button type="submit" class="btn btn-primary" id="getTemp">Get Temp</button>
         </div>
@@ -40,7 +40,7 @@
 
     <div class="invalid-city"></div>
     <div id="ajax-loader">
-      <img src="img/ajax-loader.gif" alt="ajax-loader">
+      <img src="img/loader.gif" alt="ajax-loader">
     </div>
     <div class="pinnedPosts"></div>
     <div class="posts"></div>
